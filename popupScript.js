@@ -1,12 +1,12 @@
-function doesFontExist(fontName) {
-    //Function is from https://gist.github.com/alloyking/4154494
-    let canvas = document.createElement("canvas");
-    let context = canvas.getContext("2d");
-    let text = "abcdefghijklmnopqrstuvwxyz0123456789";
+
+function doesFontExist(fontName) { //Function is from https://gist.github.com/alloyking/4154494
+    var canvas = document.createElement("canvas");
+    var context = canvas.getContext("2d");
+    var text = "abcdefghijklmnopqrstuvwxyz0123456789";
     context.font = "72px monospace";
-    let baselineSize = context.measureText(text).width;
+    var baselineSize = context.measureText(text).width;
     context.font = "72px '" + fontName + "', monospace";
-    let newSize = context.measureText(text).width;
+    var newSize = context.measureText(text).width;
     delete canvas;
     if (newSize == baselineSize) {
         return false;
@@ -14,235 +14,197 @@ function doesFontExist(fontName) {
         return true;
     }
 }
+var question = document.getElementById('question');
+var bookmarklet = document.getElementById('bookmarklet');
+var createBook = document.getElementById('createBook');
+var select = document.getElementById('dropdown');
+var input = document.getElementsByTagName('input');
+var refresh=document.getElementById('refresh');
+var colorCheck = document.getElementsByName('color');
+var sizeCheck= document.getElementsByName('size');
+var setNumber=document.getElementById('setNumber');
+var selectNumber=document.getElementById('selectNumber');
+var setColor=document.getElementById('setColor');
+var selectColor=document.getElementById('selectColor');
+var customFont=document.getElementById('customFont');
+var customLink=document.getElementById('customLink');
+var hide=document.getElementById('hide');
+var addFont=document.getElementById('addFont');
+var hideText=document.getElementById('hideText');
+var option = document.getElementsByTagName('option');
+var sizeForm = document.getElementById('size');
+var colorForm = document.getElementById('color');
+var font ="";
+var size="";
+var color="";
+var selectedColor;
+var selectedSize;
+var link =[];
+var custom = [];
+var master;
+var rels = ["Arial Black","Calibri","Century Gothic","Comic Sans MS","Consolas",
+"Courier","Courier New","Garamond","Georgia","Gill Sans","Helvetica","Helvetica Neue","Impact",
+"Lato","Lucida Sans","Open Sans","Oswald","Palatino","Raleway","Roboto","Raleway","Tahoma","Times","Times New Roman",
+"Trebuchet MS","Space Mono","Verdana"];
+var presetFonts = ["Apple Chancery","Arial","Arial Black","Baskerville","Book Antiqua","Bookman","Calibri","Century Gothic","Comic Sans MS","Consolas",
+"Courier","Courier New","Cursive","Fantasy","Gadget","Garamond","Geneva","Georgia","Gill Sans","Helvetica",
+"Helvetica Neue","Impact","Lato","Lucida Sans","Lucida Grande","Lucida Sans Unicode","Monospace","Myriad Pro","Open Sans","Oswald","Palatino",
+"Palatino Linotype","Papyrus","Raleway","Roboto","Raleway","Tahoma","Times","Times New Roman",
+"Trebuchet MS","Space Mono","Symbol","Verdana","Webdings","Wingdings","Zapfino"];
+var actualFonts = new Array;
+for (elt of presetFonts){
+  if(doesFontExist(presetFonts[presetFonts.indexOf(elt)])||rels.includes(presetFonts[presetFonts.indexOf(elt)])){
+    let newOpt = document.createElement('option');
+    newOpt.appendChild(document.createTextNode(elt));
+    select.appendChild(newOpt);
+    newOpt.value = elt;
+    actualFonts.push(elt);
+  }
+}
 
-let elements = {
-    newStyle: document.getElementById("newStyle"),
-    masterBox: document.getElementById("masterBox"),
-    outerDiv: document.getElementById("outerDiv"),
-    question: document.getElementById("question"),
-    bookmarklet: document.getElementById("bookmarklet"),
-    createBook: document.getElementById("createBook"),
-    // refresh: document.getElementsByClassName('refresh'),
-};
-
-let rels = ["Arial Black", "Calibri", "Century Gothic", "Comic Sans MS", "Consolas", "Courier", "Courier New", "Garamond", "Georgia", "Gill Sans", "Helvetica", "Helvetica Neue", "Impact", "Lato", "Lucida Sans", "Open Sans", "Oswald", "Palatino", "Raleway", "Roboto", "Raleway", "Tahoma", "Times", "Times New Roman", "Trebuchet MS", "Space Mono", "Verdana"];
-let presetFonts = ["Apple Chancery", "Arial", "Arial Black", "Baskerville", "Book Antiqua", "Bookman", "Calibri", "Century Gothic", "Comic Sans MS", "Consolas", "Courier", "Courier New", "Cursive", "Fantasy", "Gadget", "Garamond", "Geneva", "Georgia", "Gill Sans", "Helvetica", "Helvetica Neue", "Impact", "Lato", "Lucida Sans", "Lucida Grande", "Lucida Sans Unicode", "Monospace", "Myriad Pro", "Open Sans", "Oswald", "Palatino", "Palatino Linotype", "Papyrus", "Raleway", "Roboto", "Raleway", "Tahoma", "Times", "Times New Roman", "Trebuchet MS", "Space Mono", "Symbol", "Verdana", "Webdings", "Wingdings", "Zapfino"];
-let links = [];
-let custom = [];
-let master;
-
-let styles = [];
-
-function start() {
-    outerDiv.innerHTML = "";
-
-    for (let i = 0; i < styles.length; i++) {
-        let style = styles[i];
-        outerDiv.appendChild(style.elt);
-
-        style.deleteStyle.addEventListener("click", () => {
-            styles.splice(i, 1);
-            console.log(i);
-            start();
-            pressRefresh();
-        });
-
-        style.dropdown.addEventListener("change", function () {
-            bookmarklet.style.display = "none";
-            style.hide.style.display = style.dropdown.value === "Custom" ? "block" : "none";
-            if (style.dropdown.value != "Custom") {
-                pressRefresh();
-            }
-        });
-
-        style.addFont.addEventListener("click", function () {
-            let font = style.customFont.value;
-
-            links.push(style.customLink.value);
-            custom.push(font);
-
-            let newOpt = document.createElement("option");
-            newOpt.innerText = font;
-            newOpt.value = font;
-            style.dropdown.appendChild(newOpt);
-
-            style.dropdown.value = font;
-            style.hide.style.display = "none";
-            pressRefresh();
-        });
-
-        for (let option of style.colorFormOptions) {
-            option.addEventListener("change", () => {
-                style.selectedColor = option.value;
-                pressRefresh();
-            });
+let newOpt = document.createElement('option');
+newOpt.appendChild(document.createTextNode('--Add Font--'));
+select.appendChild(newOpt);
+newOpt.value = "Custom";
+function pressRefresh(tab){
+  if(select.value=="Custom"){
+    font=customFont.value;
+  }else{
+    font=select.value;
+  }
+  if(setNumber.value>0){
+  setNumber.value=+(Math.abs(input[4].value)).toFixed(1);
+  if(selectNumber.checked==true){
+        size=setNumber.value;
+  }
+}
+    for (elt of sizeCheck){
+        if (elt.checked==true){
+        selectedSize=elt.value;
         }
-
-        for (let option of style.sizeFormOptions) {
-            option.addEventListener("change", () => {
-                style.selectedSize = option.value;
-                pressRefresh();
-            });
-        }
-
-        style.applyToSelect.addEventListener("change", pressRefresh);
-        style.setNumber.addEventListener("change", pressRefresh);
-        style.setColor.addEventListener("change", pressRefresh);
     }
-
-    elements.masterBox.checked = master;
-}
-
-function addStyle() {
-    let add = new StyleBox({
-        font: "",
-        size: 12,
-        color: "#000",
-        applyTo: "all",
-        selectedColor: "",
-        selectedSize: "",
-    });
-    styles.push(add);
-
-    start();
-    pressRefresh();
-}
-
-function pressRefresh() {
-    for (let style of styles) {
-        style.send();
-        style.update();
+    color=setColor.value;
+    for (let elt of colorCheck){
+        if (elt.checked==true){
+            selectedColor = elt.value;
+        }
     }
-    let msg = {
-        master: masterBox.checked,
-        styles,
-        links,
-        custom,
-    };
-    chrome.runtime.sendMessage(msg);
-    bookmarklet.style.display = "none";
+var msg = {master:input[0].checked, font: font,size: size, color: color, sizeCheck: selectedSize, colorCheck: selectedColor, link: link,custom:custom};
+chrome.runtime.sendMessage(msg);
+console.log(msg);
+bookmarklet.style.display = 'none';
 }
 
-function createBook() {
-    // let href = "javascript:(function(){let all = document.getElementsByTagName('*');for (let elt of all){" +
-    //   styles[i].font !== undefined && styles[i].font !== "Custom" ? "elt.style.fontFamily = '" + styles[i].font + "';" : "" +
-    //   styles[i].selectedSize == "Custom" ? "elt.style.fontSize = " + styles[i].size + ";" : styles[i].selectedSize == "Random" ? "elt.style.fontSize=(Math.random()*10)+10+'px';" : "" +
-    //   styles[i].selectedColor == "Custom" ? "elt.style.color = " + stylescolor + ";" : styles[i].selectedColor == "Random" ? "let rand = (Math.floor(Math.random()*16777215)); elt.style.color= '#'+rand.toString(16);" : "" +
-    //   "}})()"
 
-    let href = `javascript:(()=>{
-        let styles = ${JSON.stringify(styles)};
-        let rels = ["Arial+Black", "Calibri", "Century+Gothic", "Comic+Sans+MS", "Consolas", "Courier", "Courier+New", "Garamond", "Georgia", "Gill+Sans", "Helvetica", "Helvetica+Neue", "Impact", "Lato", "Lucida+Sans", "Open+Sans", "Oswald", "Palatino", "Raleway", "Roboto", "Raleway", "Tahoma", "Times", "Times+New+Roman", "Trebuchet+MS", "Space+Mono", "Verdana"];
-        let links = ${JSON.stringify(links)};
 
-        let elements = {
-            all: ["*"],
-            para: ["p"],
-            link: ["a"],
-            list: ["li"],
-            strong: ["b", "strong"],
-            ital: ["i", "em"],
-            sup: ["sup"],
-            code: ["code"],
-            input: ["form", "input"],
-            head: ["h1", "h2", "h3", "h4", "h5", "h6"],
-        };
 
-        let preconnect1 = document.createElement("link");
-        preconnect1.setAttribute("rel", "preconnect");
-        preconnect1.setAttribute("href", "https://fonts.googleapis.com");
-        preconnect1.setAttribute("crossorigin", "");
-        document.head.appendChild(preconnect1);
-        links.push(preconnect1);
+window.onload = function(){
 
-        let preconnect2 = document.createElement("link");
-        preconnect2.setAttribute("rel", "preconnect");
-        preconnect2.setAttribute("href", "https://fonts.gstatic.com");
-        preconnect2.setAttribute("crossorigin", "");
-        document.head.appendChild(preconnect2);
-        links.push(preconnect2);
-
-        for (let rel of rels) {
-            let link = document.createElement("link");
-            link.setAttribute("rel", "stylesheet");
-            link.setAttribute("type", "text/css");
-            link.setAttribute("href", "https://fonts.googleapis.com/css?family=" + rel);
-            document.head.appendChild(link);
-        }
-        
-
-        for (let style of styles) {
-            for (let tagName of elements[style.applyTo]) {
-                let newStyle = document.createElement("style");
-
-                newStyle.innerHTML = tagName + " {";
-
-                if (style.font !== "Default") {
-                    newStyle.innerHTML += 'font-family: "' + style.font + '" !important;'
-                }
-                if (style.selectedSize == "Custom") {
-                    newStyle.innerHTML += 'font-size: ' + style.size + 'px !important;'
-                }
-                if (style.selectedSize == "Random") {
-                    newStyle.innerHTML += 'font-size: ' + Math.random() * 10 + 10 + 'px !important;'
-                }
-                if (style.selectedColor == "Custom") {
-                    newStyle.innerHTML += 'color: ' + style.color + ' !important;'
-                }
-                if (style.selectedColor == "Random") {
-                    let rand = Math.floor(Math.random() * 16777215);
-                    newStyle.innerHTML += 'color: #' + rand.toString(16) + ' !important;';
-                }
-                newStyle.innerHTML += "}";
-
-                document.head.appendChild(newStyle);
-                console.log(newStyle.innerHTML)
-            }
-        }
-
-    })()`;
-
-    bookmarklet.setAttribute("href", encodeURI(href));
-    bookmarklet.style.display = "block";
+chrome.runtime.sendMessage({requestVariables: true});
 }
-
-question.addEventListener("click", function () {
-    alert('Bookmarklets allow you to execute code temporarily without downloading anything. If you find a style you like, click "Create Bookmarklet" and drag it to your bookmarks bar. You can change the name and share it with your firends, even if they don\'t have Re-Font installed. However, the websites will go back to normal when you refresh the page.');
-});
-
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    styles = request.styles.map(e => new StyleBox(e));
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
+  if(request.font!==undefined){
     custom = request.custom;
-    links = request.links;
+    link = request.link;
+
     master = request.master;
-    for (let style of styles) {
-        if (style.font !== undefined) {
-            style.font = style.font || "Default";
+    font= request.font;
 
-            for (let j = 0; j < custom.length; j++) {
-                let newOpt = document.createElement("option");
-                newOpt.innerText = custom[j];
-                style.dropdown.appendChild(newOpt);
-                newOpt.value = custom[j];
-            }
+  if(font==""){
+  font="Default";
+  }
+    size= request.size;
+    color= request.color;
+    selectedColor= request.colorCheck;
+    selectedSize= request.sizeCheck;
+    for (i=0;i<custom.length;i++){
+      let newOpt = document.createElement('option');
+      newOpt.appendChild(document.createTextNode(custom[i]));
+      select.appendChild(newOpt);
+      newOpt.value = custom[i];
+    }
+    console.log(request);
+  }
 
-            style.update();
-            // style.send();
+    select.value=font;
+    input[0].checked=master;
+    for (elt of colorCheck){
+              if (elt.value==selectedColor){
+                elt.checked=true;
+                }
+      }
+      for (elt of sizeCheck){
+                if (elt.value==selectedSize){
+                  elt.checked=true;
+                  }
         }
-    }
+        setNumber.value=size;
+        setColor.value=color;
+});
+bookmarklet.style.display = 'none';
+var inHref = {};
 
-    for (let style of styles) {
-        style.update();
-        // style.send();
+createBook.addEventListener("click", function(){
+  inHref = {
+    begin:"javascript:(function(){var all = document.getElementsByTagName('*');for (elt of all){",
+  font:(function(){
+    if(font!==undefined&&font!=="Custom"){
+      return "elt.style.fontFamily = '"+font+"';";
+    }else{
+      return "";
     }
-    start();
+  })(),
+  size:(function(){
+    if(selectedSize=="Custom"){
+      return "elt.style.fontSize = "+size+";";
+    }else if(selectedSize=="Random"){
+      return "elt.style.fontSize=(Math.random()*10)+10+'px';";
+    }else{
+      return "";
+    }
+  })(),
+  color:(function(){
+    if(selectedColor=="Custom"){
+      return "elt.style.color = "+color+";";
+    }else if(selectedColor == "Random"){
+      return "let rand = (Math.floor(Math.random()*16777215)); elt.style.color= '#'+rand.toString(16);";
+    }else{
+      return "";
+    }
+  })(),
+  end:"}})()"};
+  bookmarklet.setAttribute('href',inHref.begin+inHref.font+inHref.size+inHref.color+inHref.end);
+  bookmarklet.style.display = 'block';
+  console.log(inHref.begin+inHref.font+inHref.size+inHref.color+inHref.end);
+
+});
+question.addEventListener("click", function(){
+alert("Bookmarklets allow you to execute code without even downloading anything. If you find a style you like, click \"Create Bookmarklet\" and drag it to your bookmarks bar. You can change the name and even share it with your firends, regardless of wheather they have Re-Font installed. However, the websites will go back to normal when you refresh the page.");
+});
+addFont.addEventListener("click", function(){
+  link.push(customLink.value);
+  custom.push(customFont.value);
+  // for (i=0;i<custom.length;i++){
+    let newOpt = document.createElement('option');
+    newOpt.appendChild(document.createTextNode(custom[custom.indexOf(customFont.value)]));
+    select.appendChild(newOpt);
+    newOpt.value = custom[custom.indexOf(customFont.value)];
+  // }
+  select.value=custom[custom.indexOf(customFont.value)];
+  hide.style.display="none";
+  pressRefresh();
 });
 
-bookmarklet.style.display = "none";
-elements.newStyle.addEventListener("click", addStyle);
-elements.masterBox.addEventListener("click", pressRefresh);
-elements.createBook.addEventListener("click", createBook);
-
-chrome.runtime.sendMessage({
-    requestVariables: true,
+select.addEventListener("change", function(){
+  bookmarklet.style.display = 'none';
+  if(select.value==="Custom"){
+    hide.style.display="block";
+  }else{
+    hide.style.display="none";
+  }
+pressRefresh();
 });
+let listeners = [setNumber, setColor, sizeForm, colorForm, input[0]];
+for (elt of listeners){
+  elt.addEventListener("change", pressRefresh);
+}
