@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Re-Font</title>
+        <style>
+            body {
+                width: 300px;
+                transition: 2s;
+                background: #92d8e9;
+                padding-left: 10px;
+                padding-right: 10px;
+                border-radius: 10px;
+            }
+
+            .innerDiv {
+                background: #bde9f4;
+                padding: 10px;
+                border-radius: 10px;
+                border: solid 1px #9fbcc3;
+            }
+        </style>
+    </head>
+
+    <body>
+        <h1>Settings</h1>
+        <input id="masterBox" type="checkbox" checked />Enabled
+        <button id="newStyle" style="font-size: 15px; float: right; margin-right: 10px">+</button>
+        <br /><br />
+        <div id="outerDiv">
+            <!-- STYLES GO HERE -->
+        </div>
+        <br />
+        <button id="createBook">Create Bookmarklet</button><button id="question">?</button>
+        <br />
+        <a id="bookmarklet">Drag me to the bookmarks bar!</a>
+        <script src="StyleBox.js"></script>
+        <script src="popupScript.js"></script>
+    </body>
+</html>
