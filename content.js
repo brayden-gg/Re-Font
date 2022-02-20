@@ -1,96 +1,84 @@
-var master;
-var sizeCheck;
-var colorCheck;
 var all = document.getElementsByTagName("*");
-var font="";
-var color="";
-var size="";
-var links = [];
-var rels = ["Arial+Black","Calibri","Century+Gothic","Comic+Sans+MS","Consolas",
-"Courier","Courier+New","Garamond","Georgia","Gill+Sans","Helvetica","Helvetica+Neue","Impact",
-"Lato","Lucida+Sans","Open+Sans","Oswald","Palatino","Raleway","Roboto","Raleway","Tahoma","Times","Times+New+Roman",
-"Trebuchet+MS","Space+Mono","Verdana"];
-let oldStyle = [];
-
-for (i=0;i<rels.length;i++){
-links.push(document.createElement('link'));
-document.head.appendChild(links[i]);
-links[i].setAttribute('rel', 'stylesheet');
-links[i].setAttribute('type', 'text/css');
-links[i].setAttribute('href', 'https://fonts.googleapis.com/css?family='+rels[i]);
+let data = {
+  font: "Default",
+  color: "",
+  size: "",
+  links: [],
 }
 
+var rels = ["Arial+Black", "Calibri", "Century+Gothic", "Comic+Sans+MS", "Consolas",
+  "Courier", "Courier+New", "Garamond", "Georgia", "Gill+Sans", "Helvetica", "Helvetica+Neue", "Impact",
+  "Lato", "Lucida+Sans", "Open+Sans", "Oswald", "Palatino", "Raleway", "Roboto", "Raleway", "Tahoma", "Times", "Times+New+Roman",
+  "Trebuchet+MS", "Space+Mono", "Verdana"
+];
 
-for(let i = 0; i < all.length; i++){
-  oldStyle[i] = {
-    fontFamily: all[i].style.fontFamily,
-    fontSize: all[i].style.fontSize,
-    color: all[i].style.color,
-  };
+
+for (i = 0; i < rels.length; i++) {
+  data.links.push(document.createElement('link'));
+  document.head.appendChild(data.links[i]);
+  data.links[i].setAttribute('rel', 'stylesheet');
+  data.links[i].setAttribute('type', 'text/css');
+  data.links[i].setAttribute('href', 'https://fonts.googleapis.com/css?family=' + rels[i]);
 }
-reFont();
 
-function reFont(){
-    for (let i = 0; i < all.length; i++){
-      let instances = all[i];
-      if(oldStyle[i]){
-        instances.style.fontFamily = oldStyle[i].fontFamily;
-        instances.style.fontSize = oldStyle[i].fontSize;
-        instances.style.color = oldStyle[i].color;
-      }else{
-        instances.style.fontFamily = "";
-        instances.style.fontSize = "";
-        instances.style.color = "";
-      }
-
-      if(font!=="Default" && master){
-          instances.style.fontFamily= font;
-        }
-        if(sizeCheck=="Custom" && master){
-        instances.style.fontSize=size+"px";
-        }
-        if(sizeCheck=="Random" && master){
-            instances.style.fontSize=(Math.random()*10)+10+"px";
-        }
-        if(colorCheck=="Custom" && master){
-            instances.style.color= color;
-        }
-        if(colorCheck=="Random" && master){
-            let rand = (Math.floor(Math.random()*16777215));
-            instances.style.color= '#'+rand.toString(16);
-
-      }
+function reFont() {
+  for (instances of all) {
+    instances.style.fontFamily = "";
+    if (data.font !== "Default") {
+      instances.style.fontFamily = data.font;
     }
-console.log('reFonted')
-}
-
-chrome.runtime.sendMessage({requestVariables: true});
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
-  master = request.master;
-    if(request.font!==undefined){
-      if(request.link.length!==0){
-        links.push(document.createElement('link'));
-        document.head.appendChild(links[links.length-1]);
-        links[links.length-1].setAttribute('rel', 'stylesheet');
-        links[links.length-1].setAttribute('type', 'text/css');
-        links[links.length-1].setAttribute('href', request.link[request.font.indexOf(request.font)]);
-      }
+    instances.style.fontSize = "";
+    if (data.selectedSize == "Custom") {
+      instances.style.fontSize = data.size + "px";
     }
-    if(master==true){
-    font = request.font;
-    color = request.color;
-    sizeCheck=request.sizeCheck;
-    colorCheck=request.colorCheck;
-    size = request.size;
-  }else{
-    font = "Default";
-    color = "";
-    sizeCheck="";
-    colorCheck="";
-    size = "";
+    if (data.selectedSize == "Random") {
+      instances.style.fontSize = (Math.random() * 10) + 10 + "px";
+    }
+    instances.style.color = "";
+    if (data.selectedColor == "Custom") {
+      instances.style.color = data.color;
+    }
+    if (data.selectedColor == "Random") {
+      let rand = (Math.floor(Math.random() * 16777215));
+      instances.style.color = '#' + rand.toString(16);
+
+    }
   }
+  console.log('reFonted')
+}
+
+chrome.runtime.sendMessage({
+  requestVariables: true
+});
+
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  data.master = request.master;
+  if (request.font) {
+    if (request.links.length !== 0) {
+      data.links.push(document.createElement('link'));
+      document.head.appendChild(data.links[data.links.length - 1]);
+      data.links[links.length - 1].setAttribute('rel', 'stylesheet');
+      data.links[links.length - 1].setAttribute('type', 'text/css');
+      data.links[links.length - 1].setAttribute('href', request.links[request.font.indexOf(request.font)]);
+      console.log(request.links);
+      console.log(request.font);
+      console.log(request.font.indexOf(request.font));
+    }
+  }
+  if (data.master) {
+    data = request;
+  } else {
+    data = {
+      font: "Default",
+      color: "",
+      selectedSize: "",
+      selectedColor: "",
+      size: "",
+    }
+  }
+  console.log(data);
 
   reFont();
 
 });
-
+reFont();

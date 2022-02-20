@@ -12,7 +12,7 @@ body{
 </head>
 <body>
 <h1>Settings</h1>
-<input type="checkbox" checked>Enabled<br><br>
+<input type="checkbox" class="pressRefresh" checked>Enabled<br><br>
 Choose Font:<br>
 <select id="dropdown">
   <option value="Default" >--Default--</option>
@@ -24,16 +24,16 @@ Link:<input id="customLink">
 <button id="addFont">Add</button></div><br>
 
 Choose Size:<br>
-<form id="size">
-  <input type="radio" name="size" value="Custom" id="selectNumber"><input type="number" id="setNumber" min="0" max="300">px<br>
+<form id="size"class="pressRefresh">
+  <input type="radio" name="size" value="Custom" id="selectNumber"><input type="number" id="setNumber" min="0" max="300" class="pressRefresh">px<br>
 <input type="radio" name="size" value="Random">Random<br>
 <input type="radio" name="size" value="" checked>Default<br>
 
 </form>
 <br><br>
 Choose Color:<br>
-<form id="color">
-  <input type="radio" name="color" value="Custom" id="selectColor"><input type="color" id="setColor"><br>
+<form id="color" class="pressRefresh">
+  <input type="radio" name="color" value="Custom" id="selectColor"><input type="color" id="setColor" class="pressRefresh"><br>
 <input type="radio" name="color" value="Random">Random<br>
 <input type="radio" name="color" value="" checked>Default<br>
 
